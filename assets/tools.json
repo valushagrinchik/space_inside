@@ -1,0 +1,32 @@
+{
+  "tools": [
+    {
+      "id": "selfkind",
+      "name": "SelfKind",
+      "icon": "self_improvement",
+      "color": "#E6E9D9",
+      "description": "Practice self-kindness"
+    },
+    {
+      "id": "career",
+      "name": "Career",
+      "icon": "work",
+      "color": "#D8E4F0",
+      "description": "Build your career"
+    },
+    {
+      "id": "moments",
+      "name": "Moments",
+      "icon": "favorite",
+      "color": "#F7E6D7",
+      "description": "Save meaningful moments"
+    },
+    {
+      "id": "reminders",
+      "name": "Reminders",
+      "icon": "notifications",
+      "color": "#D9E5D6",
+      "description": "Never forget important things"
+    }
+  ]
+}
