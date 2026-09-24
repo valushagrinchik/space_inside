@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 96,
                         fit: BoxFit.cover,
                       ),
-                      const SizedBox(width: 16),
+                      const SizedBox(width: 0),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,8 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
                           childAspectRatio: 1.0,
                         ),
                     itemCount: data.visible.length,
@@ -121,14 +121,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   padding: const EdgeInsets.only(top: 8),
                   child: Container(
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.12,
+                    height: MediaQuery.of(context).size.height * 0.10,
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage('assets/banner.png'),
                         fit: BoxFit.cover,
                       ),
                     ),
-                    alignment: Alignment.bottomRight,
+                    alignment: Alignment.centerRight,
                     padding: const EdgeInsets.all(16),
                     child: Text(
                       'A little space\nfor what matters',
@@ -136,10 +136,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontFamily: 'Cormorant Garamond',
                         color: Theme.of(context).colorScheme.onPrimary,
-                        shadows: const [
-                          Shadow(blurRadius: 4, color: Colors.black54),
-                        ],
                         fontSize: 16,
+                        height: 1,
                       ),
                     ),
                   ),

@@ -15,7 +15,9 @@ IconData resolveIcon(String name) {
     'self_improvement': Icons.self_improvement,
     'work': Icons.work,
     'favorite': Icons.favorite,
+    'person': Icons.person,
     'notifications': Icons.notifications,
+    'handshake': Icons.handshake,
   };
   return map[name] ?? Icons.build;
 }

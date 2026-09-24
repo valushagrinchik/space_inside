@@ -5,7 +5,23 @@
       "name": "SelfKind",
       "icon": "self_improvement",
       "color": "#E6E9D9",
-      "description": "Practice self-kindness"
+      "description": "Practice self-kindness",
+      "practices": [
+        {
+          "id": "gratitude",
+          "title": "Gratitude",
+          "description": "Fixing moments of gratitude.",
+          "icon": "favorite",
+          "color": "#F7E6D7"
+        },
+        {
+          "id": "self_trust",
+          "title": "Self-trust",
+          "description": "Fixing moments when you heard yourself and acted in agreement with your own feelings.",
+          "icon": "person",
+          "color": "#E6E9D9"
+        }
+      ]
     },
     {
       "id": "career",
@@ -27,6 +43,13 @@
       "icon": "notifications",
       "color": "#D9E5D6",
       "description": "Never forget important things"
+    },
+    {
+      "id": "relationship",
+      "name": "Relationship",
+      "icon": "handshake",
+      "color": "#F0E6D9",
+      "description": "Nurture your relationships"
     }
   ]
 }
