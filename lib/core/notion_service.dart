@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import '../models/journal_entry.dart';
 import 'database.dart';
@@ -17,10 +18,10 @@ class NotionConfig {
 }
 
 class NotionService {
-  static const _tokenKey = 'notion_token';
-  static const _databaseIdKey = 'notion_database_id';
   static const _autoSyncKey = 'notion_auto_sync';
   static const _apiVersion = '2022-06-28';
+  static String get _token => dotenv.env['NOTION_TOKEN'] ?? '';
+  static String get _databaseId => dotenv.env['NOTION_DATABASE_ID'] ?? '';
 
   static Future<String> _readSetting(String key) async {
     final db = await AppDatabase.instance;
@@ -55,20 +56,101 @@ class NotionService {
   }
 
   static Future<NotionConfig> loadConfig() async {
-    final token = await _readSetting(_tokenKey);
-    final databaseId = await _readSetting(_databaseIdKey);
     final autoSyncRaw = await _readSetting(_autoSyncKey);
     return NotionConfig(
-      token: token,
-      databaseId: databaseId,
+      token: _token,
+      databaseId: _databaseId,
       autoSync: autoSyncRaw.toLowerCase() == 'true',
     );
   }
 
   static Future<void> saveConfig(NotionConfig config) async {
-    await _writeSetting(_tokenKey, config.token);
-    await _writeSetting(_databaseIdKey, config.databaseId);
     await _writeSetting(_autoSyncKey, config.autoSync.toString());
+  }
+
+  static Future<Map<String, dynamic>> _request(
+    String method,
+    Uri uri, {
+    Map<String, dynamic>? body,
+  }) async {
+    final config = await loadConfig();
+    if (config.token.isEmpty) {
+      throw Exception('Notion token is not configured');
+    }
+    final headers = {
+      'Authorization': 'Bearer ${config.token}',
+      'Notion-Version': _apiVersion,
+      'Content-Type': 'application/json',
+    };
+    final http.Response response;
+    if (method == 'GET') {
+      response = await http.get(uri, headers: headers);
+    } else {
+      response = await http.post(uri, headers: headers, body: jsonEncode(body));
+    }
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception(
+        'Notion API error ${response.statusCode}: ${response.body}',
+      );
+    }
+    return jsonDecode(response.body) as Map<String, dynamic>;
+  }
+
+  static Future<Map<String, dynamic>> getDatabase(String databaseId) async {
+    return _request(
+      'GET',
+      Uri.parse('https://api.notion.com/v1/databases/$databaseId'),
+    );
+  }
+
+  static Future<List<Map<String, dynamic>>> queryDatabase(
+    String databaseId, {
+    Map<String, dynamic>? filter,
+    int pageSize = 100,
+  }) async {
+    final results = <Map<String, dynamic>>[];
+    String? nextCursor;
+    while (true) {
+      final body = <String, dynamic>{'page_size': pageSize};
+      if (filter != null) body['filter'] = filter;
+      if (nextCursor != null) body['start_cursor'] = nextCursor;
+      final data = await _request(
+        'POST',
+        Uri.parse('https://api.notion.com/v1/databases/$databaseId/query'),
+        body: body,
+      );
+      final list = (data['results'] as List).cast<Map<String, dynamic>>();
+      results.addAll(list);
+      nextCursor = data['next_cursor'] as String?;
+      if (data['has_more'] != true || nextCursor == null) break;
+    }
+    return results;
+  }
+
+  static Future<List<Map<String, dynamic>>> search({
+    String query = '',
+    int pageSize = 100,
+  }) async {
+    final results = <Map<String, dynamic>>[];
+    String? nextCursor;
+    while (true) {
+      final body = <String, dynamic>{
+        'page_size': pageSize,
+        if (query.isNotEmpty) 'query': query,
+        'filter': {'value': 'database', 'property': 'object'},
+      };
+      if (nextCursor != null) body['start_cursor'] = nextCursor;
+      final data = await _request(
+        'POST',
+        Uri.parse('https://api.notion.com/v1/search'),
+        body: body,
+      );
+      final list = (data['results'] as List).cast<Map<String, dynamic>>();
+      results.addAll(list);
+      nextCursor = data['next_cursor'] as String?;
+      if (data['has_more'] != true || nextCursor == null) break;
+    }
+    return results;
   }
 
   static Future<void> onEntrySaved(JournalEntry entry) async {

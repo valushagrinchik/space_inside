@@ -10,8 +10,6 @@ class NotionSettingsScreen extends StatefulWidget {
 }
 
 class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
-  final _tokenController = TextEditingController();
-  final _databaseIdController = TextEditingController();
   bool _autoSync = false;
   bool _loading = true;
   bool _syncing = false;
@@ -24,8 +22,6 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
 
   Future<void> _load() async {
     final config = await NotionService.loadConfig();
-    _tokenController.text = config.token;
-    _databaseIdController.text = config.databaseId;
     setState(() {
       _autoSync = config.autoSync;
       _loading = false;
@@ -33,13 +29,7 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
   }
 
   Future<void> _save() async {
-    await NotionService.saveConfig(
-      NotionConfig(
-        token: _tokenController.text.trim(),
-        databaseId: _databaseIdController.text.trim(),
-        autoSync: _autoSync,
-      ),
-    );
+    await NotionService.saveConfig(NotionConfig(autoSync: _autoSync));
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
@@ -67,13 +57,6 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
   }
 
   @override
-  void dispose() {
-    _tokenController.dispose();
-    _databaseIdController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final onSurface = Theme.of(context).colorScheme.onSurface;
     if (_loading) {
@@ -84,22 +67,11 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          TextField(
-            controller: _tokenController,
-            decoration: const InputDecoration(
-              labelText: 'Интеграционный токен Notion',
-              border: OutlineInputBorder(),
+          Text(
+            'Токен и ID базы данных загружаются из .env',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: onSurface.withValues(alpha: 0.7),
             ),
-            style: TextStyle(color: onSurface),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _databaseIdController,
-            decoration: const InputDecoration(
-              labelText: 'ID базы данных Notion',
-              border: OutlineInputBorder(),
-            ),
-            style: TextStyle(color: onSurface),
           ),
           const SizedBox(height: 16),
           SwitchListTile(

@@ -18,6 +18,9 @@ IconData resolveIcon(String name) {
     'person': Icons.person,
     'notifications': Icons.notifications,
     'handshake': Icons.handshake,
+    'explore': Icons.explore,
+    'psychology': Icons.psychology,
+    'spa': Icons.spa,
   };
   return map[name] ?? Icons.build;
 }

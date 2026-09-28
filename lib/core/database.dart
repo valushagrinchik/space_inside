@@ -14,7 +14,7 @@ class AppDatabase {
     final dbPath = join(dir, 'space_inside.db');
     return openDatabase(
       dbPath,
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -31,6 +31,13 @@ class AppDatabase {
             data TEXT NOT NULL,
             notion_synced INTEGER NOT NULL DEFAULT 0,
             notion_page_id TEXT
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE unfold_cache (
+            key TEXT PRIMARY KEY,
+            data TEXT NOT NULL,
+            synced_at INTEGER NOT NULL
           )
         ''');
       },
@@ -52,6 +59,15 @@ class AppDatabase {
           ''');
           await db.execute('''
             ALTER TABLE journal_entries ADD COLUMN notion_page_id TEXT
+          ''');
+        }
+        if (oldVersion < 4) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS unfold_cache (
+              key TEXT PRIMARY KEY,
+              data TEXT NOT NULL,
+              synced_at INTEGER NOT NULL
+            )
           ''');
         }
       },

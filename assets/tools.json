@@ -46,10 +46,10 @@
     },
     {
       "id": "relationship",
-      "name": "Relationship",
-      "icon": "handshake",
+      "name": "Unfold",
+      "icon": "spa",
       "color": "#F0E6D9",
-      "description": "Nurture your relationships"
+      "description": "Make space for what you're going through."
     }
   ]
 }

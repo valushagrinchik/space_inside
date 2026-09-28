@@ -6,14 +6,14 @@ import '../tools/selfkind_tool.dart';
 import '../tools/career_tool.dart';
 import '../tools/moments_tool.dart';
 import '../tools/reminders_tool.dart';
-import '../tools/relationship_tool.dart';
+import '../tools/unfold/screens/unfold_tool.dart';
 
 class ToolRegistry {
   static final Map<String, WidgetBuilder> _builders = {
     'selfkind': (context) => const SelfKindTool(),
     'career': (context) => const CareerTool(),
     'moments': (context) => const MomentsTool(),
-    'relationship': (context) => const RelationshipTool(),
+    'relationship': (context) => const UnfoldTool(),
     'reminders': (context) => const RemindersTool(),
   };
 

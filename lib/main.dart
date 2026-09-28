@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
@@ -16,7 +19,10 @@ class MyApp extends StatelessWidget {
       surface: Color(0xFFF5F2EA),
       onSurface: Color(0xFF292B28),
     );
-    final baseTheme = ThemeData.from(colorScheme: colorScheme, useMaterial3: true);
+    final baseTheme = ThemeData.from(
+      colorScheme: colorScheme,
+      useMaterial3: true,
+    );
     return MaterialApp(
       title: 'Space Inside',
       debugShowCheckedModeBanner: false,
