@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import '../core/l10n.dart';
 import '../core/notion_service.dart';
 
 class NotionSettingsScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Настройки сохранены')));
+    ).showSnackBar(SnackBar(content: Text(S.t('settings_saved'))));
   }
 
   Future<void> _syncNow() async {
@@ -42,7 +43,9 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
       final count = await NotionService.syncAll();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Синхронизировано записей: $count')),
+        SnackBar(
+          content: Text(S.fmt('synced_count', {'count': '$count'})),
+        ),
       );
     } catch (e, stack) {
       log('Notion sync error: $e');
@@ -50,7 +53,9 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Ошибка синхронизации: $e')));
+      ).showSnackBar(
+        SnackBar(content: Text(S.fmt('sync_error', {'error': '$e'}))),
+      );
     } finally {
       setState(() => _syncing = false);
     }
@@ -68,7 +73,7 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
         padding: const EdgeInsets.all(16),
         children: [
           Text(
-            'Токен и ID базы данных загружаются из .env',
+            S.t('notion_env_hint'),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: onSurface.withValues(alpha: 0.7),
             ),
@@ -76,7 +81,7 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
           const SizedBox(height: 16),
           SwitchListTile(
             title: Text(
-              'Автосинхронизация при сохранении',
+              S.t('autosync_on_save'),
               style: TextStyle(color: onSurface),
             ),
             value: _autoSync,
@@ -85,7 +90,7 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _save,
-            child: const Text('Сохранить настройки'),
+            child: Text(S.t('save_settings')),
           ),
           const SizedBox(height: 12),
           ElevatedButton(
@@ -96,7 +101,7 @@ class _NotionSettingsScreenState extends State<NotionSettingsScreen> {
                     height: 20,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Синхронизировать сейчас'),
+                : Text(S.t('sync_now')),
           ),
         ],
       ),

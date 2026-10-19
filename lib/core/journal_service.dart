@@ -18,6 +18,16 @@ class JournalService {
     return db.insert('journal_entries', entry.toMap()..remove('id'));
   }
 
+  static Future<void> updateEntry(JournalEntry entry) async {
+    final db = await AppDatabase.instance;
+    await db.update(
+      'journal_entries',
+      entry.toMap()..remove('id'),
+      where: 'id = ?',
+      whereArgs: [entry.id],
+    );
+  }
+
   static Future<void> deleteEntry(int id) async {
     final db = await AppDatabase.instance;
     await db.delete('journal_entries', where: 'id = ?', whereArgs: [id]);

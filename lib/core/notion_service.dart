@@ -22,6 +22,11 @@ class NotionService {
   static const _apiVersion = '2022-06-28';
   static String get _token => dotenv.env['NOTION_TOKEN'] ?? '';
   static String get _databaseId => dotenv.env['NOTION_DATABASE_ID'] ?? '';
+  static String get _learningDatabaseId =>
+      dotenv.env['LEARNING_NOTES_DATABASE_ID'] ?? '';
+
+  static String _databaseIdFor(JournalEntry entry) =>
+      entry.toolId == 'learning' ? _learningDatabaseId : _databaseId;
 
   static Future<String> _readSetting(String key) async {
     final db = await AppDatabase.instance;
@@ -155,7 +160,9 @@ class NotionService {
 
   static Future<void> onEntrySaved(JournalEntry entry) async {
     final config = await loadConfig();
-    if (!config.autoSync || config.token.isEmpty || config.databaseId.isEmpty) {
+    if (!config.autoSync ||
+        config.token.isEmpty ||
+        _databaseIdFor(entry).isEmpty) {
       return;
     }
     try {
@@ -167,10 +174,11 @@ class NotionService {
   }
 
   static Future<void> syncEntry(JournalEntry entry) async {
-    if (entry.id == null) return;
+    if (entry.id == null || entry.toolId == 'mood') return;
     final config = await loadConfig();
-    if (config.token.isEmpty || config.databaseId.isEmpty) return;
-    final pageId = await _createPage(config, entry);
+    final databaseId = _databaseIdFor(entry);
+    if (config.token.isEmpty || databaseId.isEmpty) return;
+    final pageId = await _createPage(config, databaseId, entry);
     final db = await AppDatabase.instance;
     await db.update(
       'journal_entries',
@@ -182,12 +190,12 @@ class NotionService {
 
   static Future<int> syncAll() async {
     final config = await loadConfig();
-    if (config.token.isEmpty || config.databaseId.isEmpty) return 0;
+    if (config.token.isEmpty) return 0;
     final db = await AppDatabase.instance;
     final rows = await db.query(
       'journal_entries',
-      where: 'notion_synced = ?',
-      whereArgs: [0],
+      where: 'notion_synced = ? AND tool_id != ?',
+      whereArgs: [0, 'mood'],
       orderBy: 'created_at ASC',
     );
     final entries = rows.map(JournalEntry.fromMap).toList();
@@ -197,8 +205,24 @@ class NotionService {
     return entries.length;
   }
 
+  static Future<String> createPage({
+    required String databaseId,
+    required Map<String, dynamic> properties,
+  }) async {
+    final data = await _request(
+      'POST',
+      Uri.parse('https://api.notion.com/v1/pages'),
+      body: {
+        'parent': {'database_id': databaseId},
+        'properties': properties,
+      },
+    );
+    return data['id'] as String;
+  }
+
   static Future<String> _createPage(
     NotionConfig config,
+    String databaseId,
     JournalEntry entry,
   ) async {
     final response = await http.post(
@@ -209,23 +233,25 @@ class NotionService {
         'Content-Type': 'application/json',
       },
       body: jsonEncode({
-        'parent': {'database_id': config.databaseId},
-        'properties': {
-          'Name': {
-            'title': [
-              {
-                'text': {'content': _pageTitle(entry)},
+        'parent': {'database_id': databaseId},
+        'properties': entry.toolId == 'learning'
+            ? _learningProperties(entry)
+            : {
+                'Name': {
+                  'title': [
+                    {
+                      'text': {'content': _pageTitle(entry)},
+                    },
+                  ],
+                },
+                'Content': {
+                  'rich_text': [
+                    {
+                      'text': {'content': _pageContent(entry)},
+                    },
+                  ],
+                },
               },
-            ],
-          },
-          'Content': {
-            'rich_text': [
-              {
-                'text': {'content': _pageContent(entry)},
-              },
-            ],
-          },
-        },
       }),
     );
     if (response.statusCode != 200) {
@@ -235,6 +261,51 @@ class NotionService {
     }
     final data = jsonDecode(response.body) as Map<String, dynamic>;
     return data['id'] as String;
+  }
+
+  static Map<String, dynamic> _learningProperties(JournalEntry entry) {
+    final fields = entry.fields;
+    final isBook = entry.practiceId == 'book';
+    final title = isBook
+        ? fields['title']?.toString() ?? ''
+        : fields['text']?.toString() ?? '';
+    final note = isBook
+        ? ''
+        : fields['text']?.toString() ?? title;
+    final rawTags = fields['tags']?.toString() ?? '';
+    final tags = rawTags
+        .split(',')
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
+        .toList();
+    if (isBook) tags.add('book');
+    final author = fields['author']?.toString() ?? '';
+    return {
+      'Name': {
+        'title': [
+          {
+            'text': {'content': title},
+          },
+        ],
+      },
+      'Author': {
+        'rich_text': [
+          {
+            'text': {'content': author},
+          },
+        ],
+      },
+      'Note': {
+        'rich_text': [
+          {
+            'text': {'content': note},
+          },
+        ],
+      },
+      'Tags': {
+        'multi_select': tags.map((t) => {'name': t}).toList(),
+      },
+    };
   }
 
   static String _pageTitle(JournalEntry entry) {
@@ -249,6 +320,10 @@ class NotionService {
         return 'Self-trust';
       case 'gratitude':
         return 'Gratitude';
+      case 'book':
+        return 'Book';
+      case 'book_quote':
+        return 'Quote';
       default:
         return practiceId;
     }

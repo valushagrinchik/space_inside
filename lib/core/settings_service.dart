@@ -4,6 +4,26 @@ import 'database.dart';
 class SettingsService {
   static const _visibleToolsKey = 'visible_tools';
   static const _knownToolsKey = 'known_tools';
+  static const _languageKey = 'language';
+
+  static Future<String> loadLanguage() async {
+    final db = await AppDatabase.instance;
+    final rows = await db.query(
+      'settings',
+      where: 'key = ?',
+      whereArgs: [_languageKey],
+    );
+    if (rows.isEmpty) return 'en';
+    return rows.first['value'] as String;
+  }
+
+  static Future<void> saveLanguage(String languageCode) async {
+    final db = await AppDatabase.instance;
+    await db.insert('settings', {
+      'key': _languageKey,
+      'value': languageCode,
+    }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
 
   static Future<Set<String>> loadVisibleTools(List<String> allIds) async {
     final db = await AppDatabase.instance;

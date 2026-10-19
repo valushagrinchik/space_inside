@@ -15,7 +15,7 @@ class ToolScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(config.name),
+        title: config.hideTitle ? null : Text(config.displayName),
       ),
       body: childBuilder(context),
     );

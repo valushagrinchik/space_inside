@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'tool_config.dart';
 import '../tools/selfkind_tool.dart';
 import '../tools/career_tool.dart';
-import '../tools/moments_tool.dart';
+import '../tools/mood_tool.dart';
+import '../tools/notes_tool.dart';
 import '../tools/reminders_tool.dart';
 import '../tools/unfold/screens/unfold_tool.dart';
 
@@ -12,7 +13,8 @@ class ToolRegistry {
   static final Map<String, WidgetBuilder> _builders = {
     'selfkind': (context) => const SelfKindTool(),
     'career': (context) => const CareerTool(),
-    'moments': (context) => const MomentsTool(),
+    'learning': (context) => const NotesTool(),
+    'mood': (context) => const MoodTool(),
     'relationship': (context) => const UnfoldTool(),
     'reminders': (context) => const RemindersTool(),
   };

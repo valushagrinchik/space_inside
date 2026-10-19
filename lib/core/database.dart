@@ -14,7 +14,7 @@ class AppDatabase {
     final dbPath = join(dir, 'space_inside.db');
     return openDatabase(
       dbPath,
-      version: 4,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE settings (
@@ -34,7 +34,7 @@ class AppDatabase {
           )
         ''');
         await db.execute('''
-          CREATE TABLE unfold_cache (
+          CREATE TABLE notion_cache (
             key TEXT PRIMARY KEY,
             data TEXT NOT NULL,
             synced_at INTEGER NOT NULL
@@ -69,6 +69,11 @@ class AppDatabase {
               synced_at INTEGER NOT NULL
             )
           ''');
+        }
+        if (oldVersion < 5) {
+          await db.execute(
+            'ALTER TABLE unfold_cache RENAME TO notion_cache',
+          );
         }
       },
     );

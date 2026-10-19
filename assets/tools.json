@@ -3,21 +3,27 @@
     {
       "id": "selfkind",
       "name": "SelfKind",
+      "name_ru": "Доброта к себе",
       "icon": "self_improvement",
       "color": "#E6E9D9",
       "description": "Practice self-kindness",
+      "description_ru": "Практикую доброту к себе",
       "practices": [
         {
           "id": "gratitude",
           "title": "Gratitude",
+          "title_ru": "Благодарность",
           "description": "Fixing moments of gratitude.",
+          "description_ru": "Фиксирую моменты благодарности.",
           "icon": "favorite",
           "color": "#F7E6D7"
         },
         {
           "id": "self_trust",
           "title": "Self-trust",
+          "title_ru": "Доверие к себе",
           "description": "Fixing moments when you heard yourself and acted in agreement with your own feelings.",
+          "description_ru": "Фиксирую моменты, когда услышал(а) себя и поступил(а) в согласии с собственными чувствами.",
           "icon": "person",
           "color": "#E6E9D9"
         }
@@ -26,30 +32,47 @@
     {
       "id": "career",
       "name": "Career",
+      "name_ru": "Карьера",
       "icon": "work",
       "color": "#D8E4F0",
-      "description": "Build your career"
+      "description": "Build your career",
+      "description_ru": "Развиваю свою карьеру"
     },
+{
+      "id": "relationship",
+      "name": "Unfold",
+      "name_ru": "Рефлексия",
+      "icon": "spa",
+      "color": "#F0E6D9",
+      "description": "Make space for what you're going through.",
+      "description_ru": "Даю пространство тому, через что прохожу."
+    } ,
     {
-      "id": "moments",
-      "name": "Moments",
-      "icon": "favorite",
-      "color": "#F7E6D7",
-      "description": "Save meaningful moments"
+      "id": "learning",
+      "name": "Quotes / Notes",
+      "name_ru": "Цитаты / конспекты",
+      "icon": "menu_book",
+      "color": "#E4DFEF",
+      "description": "Quotes and notes from what you learn",
+      "description_ru": "Цитаты и конспекты того, что изучаю"
+    },
+      {
+      "id": "mood",
+      "name": "Mood",
+      "name_ru": "Настроение",
+      "icon": "mood",
+      "color": "#F3E6EF",
+      "description": "Track how you feel",
+      "description_ru": "Отмечаю, как я себя чувствую"
     },
     {
       "id": "reminders",
       "name": "Reminders",
+      "name_ru": "Напоминания",
       "icon": "notifications",
       "color": "#D9E5D6",
-      "description": "Never forget important things"
-    },
-    {
-      "id": "relationship",
-      "name": "Unfold",
-      "icon": "spa",
-      "color": "#F0E6D9",
-      "description": "Make space for what you're going through."
+      "description": "Never forget important things",
+      "description_ru": "Не забываю важное"
     }
   ]
 }

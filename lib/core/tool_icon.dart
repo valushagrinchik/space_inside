@@ -21,6 +21,10 @@ IconData resolveIcon(String name) {
     'explore': Icons.explore,
     'psychology': Icons.psychology,
     'spa': Icons.spa,
+    'menu_book': Icons.menu_book,
+    'format_quote': Icons.format_quote,
+    'edit_note': Icons.edit_note,
+    'mood': Icons.mood,
   };
   return map[name] ?? Icons.build;
 }

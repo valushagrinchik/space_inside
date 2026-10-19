@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'core/l10n.dart';
+import 'core/settings_service.dart';
 import 'screens/home_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env');
+  S.language.value = await SettingsService.loadLanguage();
   runApp(const MyApp());
 }
 
@@ -23,13 +26,16 @@ class MyApp extends StatelessWidget {
       colorScheme: colorScheme,
       useMaterial3: true,
     );
-    return MaterialApp(
-      title: 'Space Inside',
-      debugShowCheckedModeBanner: false,
-      theme: baseTheme.copyWith(
-        textTheme: baseTheme.textTheme.apply(fontFamily: 'Inter'),
+    return ValueListenableBuilder<String>(
+      valueListenable: S.language,
+      builder: (context, language, _) => MaterialApp(
+        title: 'Space Inside',
+        debugShowCheckedModeBanner: false,
+        theme: baseTheme.copyWith(
+          textTheme: baseTheme.textTheme.apply(fontFamily: 'Inter'),
+        ),
+        home: const HomeScreen(),
       ),
-      home: const HomeScreen(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/l10n.dart';
 import '../core/tool_config.dart';
 import '../core/tool_icon.dart';
 import '../core/tool_registry.dart';
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Space Inside',
+                              S.t('app_title'),
                               style: Theme.of(context).textTheme.titleLarge
                                   ?.copyWith(
                                     fontFamily: 'Cormorant Garamond',
@@ -81,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                             ),
                             Text(
-                              'your space to notice, grow and remember',
+                              S.t('tagline'),
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
                                     color: Theme.of(context)
@@ -131,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.all(16),
                     child: Text(
-                      'A little space\nfor what matters',
+                      S.t('banner_text'),
                       textAlign: TextAlign.right,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontFamily: 'Cormorant Garamond',
@@ -169,6 +170,9 @@ class _HomeData {
 class _ToolCard extends StatelessWidget {
   final ToolConfig tool;
 
+  static const _notionSynced = {'relationship', 'learning'};
+  static const _localSynced = {'relationship', 'learning', 'mood'};
+
   const _ToolCard({required this.tool});
 
   @override
@@ -179,7 +183,9 @@ class _ToolCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => _openTool(context, tool),
-        child: LayoutBuilder(
+        child: Stack(
+          children: [
+            LayoutBuilder(
           builder: (context, constraints) => Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -193,18 +199,20 @@ class _ToolCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  tool.name,
+                  tool.displayName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                if (tool.description != null &&
-                    tool.description!.isNotEmpty) ...[
+                if (tool.displayDescription != null &&
+                    tool.displayDescription!.isNotEmpty) ...[
                   const SizedBox(height: 4),
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       maxWidth: constraints.maxWidth ,
                     ),
                     child: Text(
-                      tool.description!,
+                      tool.displayDescription!,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(
                           context,
@@ -216,6 +224,34 @@ class _ToolCard extends StatelessWidget {
               ],
             ),
           ),
+            ),
+            Positioned(
+              right: 8,
+              bottom: 8,
+              child: Row(
+                children: [
+                  if (_notionSynced.contains(tool.id)) ...[
+                    Icon(
+                      Icons.cloud_done_outlined,
+                      size: 16,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.4),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                  if (_localSynced.contains(tool.id))
+                    Icon(
+                      Icons.smartphone,
+                      size: 16,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.4),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

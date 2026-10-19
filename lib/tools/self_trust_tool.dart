@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/journal_service.dart';
+import '../core/l10n.dart';
 import '../core/notion_service.dart';
 import '../models/journal_entry.dart';
 import 'journal/journal_wizard.dart';
@@ -15,36 +16,21 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
   List<JournalEntry> _entries = [];
   bool _loading = true;
 
-  static const _steps = [
-    JournalStep(key: 'situation', prompt: '🖊 Коротко опиши ситуацию.'),
-    JournalStep(
-      key: 'selfSignal',
-      prompt:
-          '🫂 Что внутри подсказало тебе это решение? Какие мысли, чувства или телесные ощущения ты заметил(а)?',
-    ),
-    JournalStep(key: 'chosenAction', prompt: '✨ Что ты выбрал(а) сделать?'),
-    JournalStep(
-      key: 'alternative',
-      prompt:
-          '🌿 А как ты обычно поступил(а) бы в похожей ситуации или чего от тебя ожидали другие?',
-    ),
-    JournalStep(
-      key: 'feelingsAfter',
-      prompt: '🌱 Что ты почувствовал(а) после?',
-    ),
-    JournalStep(
-      key: 'insight',
-      prompt: '💭 Что эта ситуация показала тебе о себе?',
-    ),
+  static List<JournalStep> get _steps => [
+    JournalStep(key: 'situation', prompt: S.t('st_situation')),
+    JournalStep(key: 'selfSignal', prompt: S.t('st_self_signal')),
+    JournalStep(key: 'chosenAction', prompt: S.t('st_chosen_action')),
+    JournalStep(key: 'alternative', prompt: S.t('st_alternative')),
+    JournalStep(key: 'feelingsAfter', prompt: S.t('st_feelings_after')),
+    JournalStep(key: 'insight', prompt: S.t('st_insight')),
     JournalStep(
       key: 'difficulty',
-      prompt:
-          '⚡️ Насколько было сложно поступить так, а не по-другому? Оцени от 0 до 10.',
+      prompt: S.t('st_difficulty'),
       inputType: JournalInputType.slider,
       min: 0,
       max: 10,
       divisions: 10,
-      label: 'Проведи ползунок или нажми нужное число',
+      label: S.t('st_difficulty_label'),
     ),
   ];
 
@@ -67,7 +53,7 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
     final result = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
         builder: (_) =>
-            const JournalWizard(title: 'Новая запись', steps: _steps),
+            JournalWizard(title: S.t('new_entry'), steps: _steps),
       ),
     );
     if (result == null) return;
@@ -118,7 +104,7 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Сложность: $difficulty/10 · ${_formatDate(entry.createdAt)}',
+              '${S.t('field_difficulty')}: $difficulty/10 · ${_formatDate(entry.createdAt)}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: onSurface.withValues(alpha: 0.7),
               ),
@@ -132,7 +118,10 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
                 title: _stepTitle(key),
                 value: entry.fields[key]?.toString() ?? '',
               ),
-            _EntryField(title: 'Сложность', value: '$difficulty/10'),
+            _EntryField(
+              title: S.t('field_difficulty'),
+              value: '$difficulty/10',
+            ),
           ],
         ),
       ),
@@ -142,17 +131,17 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
   String _stepTitle(String key) {
     switch (key) {
       case 'situation':
-        return 'Ситуация';
+        return S.t('field_situation');
       case 'selfSignal':
-        return 'Внутренний сигнал';
+        return S.t('field_self_signal');
       case 'chosenAction':
-        return 'Выбранное действие';
+        return S.t('field_chosen_action');
       case 'alternative':
-        return 'Альтернатива';
+        return S.t('field_alternative');
       case 'feelingsAfter':
-        return 'Чувства после';
+        return S.t('field_feelings_after');
       case 'insight':
-        return 'Инсайт';
+        return S.t('field_insight');
       default:
         return key;
     }
@@ -164,7 +153,7 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Self-trust')),
+      appBar: AppBar(title: Text(S.t('self_trust'))),
       floatingActionButton: FloatingActionButton(
         onPressed: _add,
         child: const Icon(Icons.add),
@@ -172,7 +161,7 @@ class _SelfTrustToolState extends State<SelfTrustTool> {
       body: _entries.isEmpty
           ? Center(
               child: Text(
-                'Пока нет записей. Нажми +, чтобы добавить.',
+                S.t('empty_entries'),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             )

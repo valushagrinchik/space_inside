@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/l10n.dart';
 import '../services/unfold_local_service.dart';
 import '../services/unfold_service.dart';
 import '../models/unfold_models.dart';
@@ -59,7 +60,7 @@ class _UnfoldToolState extends State<UnfoldTool> {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  'Ошибка: ${snapshot.error}',
+                  S.fmt('error', {'error': '${snapshot.error}'}),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: onSurface.withValues(alpha: 0.7),
@@ -75,7 +76,7 @@ class _UnfoldToolState extends State<UnfoldTool> {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
-                  'Нет сохранённых данных.\nНажмите синхронизацию, чтобы загрузить данные из Notion.',
+                  S.t('unfold_empty'),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: onSurface.withValues(alpha: 0.7),
@@ -167,7 +168,7 @@ class _PeriodPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: Text(
-            'Нет рефлексий',
+            S.t('no_reflections'),
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: onSurface.withValues(alpha: 0.6),
             ),

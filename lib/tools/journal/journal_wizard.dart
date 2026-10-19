@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/l10n.dart';
 
 enum JournalInputType { text, slider }
 
@@ -29,17 +30,17 @@ class JournalStep {
 class JournalWizard extends StatefulWidget {
   final String title;
   final List<JournalStep> steps;
-  final String nextLabel;
-  final String backLabel;
-  final String saveLabel;
+  final String? nextLabel;
+  final String? backLabel;
+  final String? saveLabel;
 
   const JournalWizard({
     super.key,
     required this.title,
     required this.steps,
-    this.nextLabel = 'Далее',
-    this.backLabel = 'Назад',
-    this.saveLabel = 'Сохранить',
+    this.nextLabel,
+    this.backLabel,
+    this.saveLabel,
   });
 
   @override
@@ -130,7 +131,7 @@ class _JournalWizardState extends State<JournalWizard> {
               keyboardType: TextInputType.multiline,
               decoration: InputDecoration(
                 border: const OutlineInputBorder(),
-                hintText: 'Введите ответ...',
+                hintText: S.t('answer_hint'),
                 hintStyle: TextStyle(color: onSurface.withValues(alpha: 0.4)),
               ),
               style: TextStyle(color: onSurface),
@@ -191,12 +192,19 @@ class _JournalWizardState extends State<JournalWizard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (_current > 0)
-                    TextButton(onPressed: _back, child: Text(widget.backLabel))
+                    TextButton(
+                      onPressed: _back,
+                      child: Text(widget.backLabel ?? S.t('back')),
+                    )
                   else
                     const SizedBox(width: 80),
                   ElevatedButton(
                     onPressed: _next,
-                    child: Text(isLast ? widget.saveLabel : widget.nextLabel),
+                    child: Text(
+                      isLast
+                          ? (widget.saveLabel ?? S.t('save'))
+                          : (widget.nextLabel ?? S.t('next')),
+                    ),
                   ),
                 ],
               ),

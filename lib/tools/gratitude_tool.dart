@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/journal_service.dart';
+import '../core/l10n.dart';
 import '../core/notion_service.dart';
 import '../models/journal_entry.dart';
 import 'journal/journal_wizard.dart';
@@ -15,33 +16,12 @@ class _GratitudeToolState extends State<GratitudeTool> {
   List<JournalEntry> _entries = [];
   bool _loading = true;
 
-  static const _steps = [
-    JournalStep(
-      key: 'moment',
-      prompt:
-          '✨ Благодарность — это способ заметить хорошее, которое уже есть в твоей жизни.\n\n'
-          '🖊 Вспомни один момент за сегодня, за который ты чувствуешь благодарность. Что произошло?',
-    ),
-    JournalStep(
-      key: 'source',
-      prompt:
-          '🫂 Кому или чему ты благодарен(на) в этой ситуации? Это человек, действие, обстоятельство или ты сам(а)?',
-    ),
-    JournalStep(
-      key: 'reason',
-      prompt:
-          '💡 Что именно в этом моменте вызвало твою благодарность? Почему это было важно для тебя?',
-    ),
-    JournalStep(
-      key: 'impact',
-      prompt:
-          '🌱 Как этот момент повлиял на твой день или состояние? Что в тебе изменилось?',
-    ),
-    JournalStep(
-      key: 'feelings',
-      prompt:
-          '🤍 Если описать твоё чувство сейчас — какое оно? (тепло, спокойствие, радость, облегчение и т.д.)',
-    ),
+  static List<JournalStep> get _steps => [
+    JournalStep(key: 'moment', prompt: S.t('gratitude_moment')),
+    JournalStep(key: 'source', prompt: S.t('gratitude_source')),
+    JournalStep(key: 'reason', prompt: S.t('gratitude_reason')),
+    JournalStep(key: 'impact', prompt: S.t('gratitude_impact')),
+    JournalStep(key: 'feelings', prompt: S.t('gratitude_feelings')),
   ];
 
   @override
@@ -63,7 +43,7 @@ class _GratitudeToolState extends State<GratitudeTool> {
     final result = await Navigator.of(context).push<Map<String, dynamic>>(
       MaterialPageRoute(
         builder: (_) =>
-            const JournalWizard(title: 'Новая запись', steps: _steps),
+            JournalWizard(title: S.t('new_entry'), steps: _steps),
       ),
     );
     if (result == null) return;
@@ -133,15 +113,15 @@ class _GratitudeToolState extends State<GratitudeTool> {
   String _stepTitle(String key) {
     switch (key) {
       case 'moment':
-        return 'Момент';
+        return S.t('field_moment');
       case 'source':
-        return 'Источник';
+        return S.t('field_source');
       case 'reason':
-        return 'Причина';
+        return S.t('field_reason');
       case 'impact':
-        return 'Влияние';
+        return S.t('field_impact');
       case 'feelings':
-        return 'Чувство';
+        return S.t('field_feelings');
       default:
         return key;
     }
@@ -153,7 +133,7 @@ class _GratitudeToolState extends State<GratitudeTool> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Gratitude')),
+      appBar: AppBar(title: Text(S.t('gratitude'))),
       floatingActionButton: FloatingActionButton(
         onPressed: _add,
         child: const Icon(Icons.add),
@@ -161,7 +141,7 @@ class _GratitudeToolState extends State<GratitudeTool> {
       body: _entries.isEmpty
           ? Center(
               child: Text(
-                'Пока нет записей. Нажми +, чтобы добавить.',
+                S.t('empty_entries'),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             )

@@ -36,12 +36,12 @@ class SelfKindTool extends StatelessWidget {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               for (var i = 0; i < filtered.length; i++) ...[
                 _PracticeCard(
-                  title: filtered[i].title,
-                  description: filtered[i].description,
+                  title: filtered[i].displayTitle,
+                  description: filtered[i].displayDescription,
                   icon: resolveIcon(filtered[i].icon),
                   color: _hexColor(filtered[i].color),
                   onTap: () => _openPractice(context, filtered[i].id),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/l10n.dart';
 import '../models/unfold_models.dart';
 
 class ReflectionDetailScreen extends StatelessWidget {
@@ -28,17 +29,17 @@ class ReflectionDetailScreen extends StatelessWidget {
           : PageView.builder(
               itemCount: fields.length,
               itemBuilder: (context, index) =>
-                  _FieldSlide(field: fields[index], onSurface: onSurface),
+                  FieldSlide(field: fields[index], onSurface: onSurface),
             ),
     );
   }
 }
 
-class _FieldSlide extends StatelessWidget {
+class FieldSlide extends StatelessWidget {
   final UnfoldField field;
   final Color onSurface;
 
-  const _FieldSlide({required this.field, required this.onSurface});
+  const FieldSlide({super.key, required this.field, required this.onSurface});
 
   @override
   Widget build(BuildContext context) {
@@ -235,7 +236,7 @@ class _EmptyPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Center(
         child: Text(
-          entry.content.isEmpty ? 'Нет данных' : entry.content,
+          entry.content.isEmpty ? S.t('no_data') : entry.content,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: onSurface.withValues(alpha: 0.7),
